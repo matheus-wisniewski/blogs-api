@@ -1,6 +1,7 @@
 const express = require('express');
 const { validateInputs } = require('./middlewares/login.middlewares');
-const { loginController, userController } = require('./controllers');
+const { loginController, userController, categoryController } = require('./controllers');
+const authentication = require('./middlewares/auth.middlewares');
 
 const app = express();
 
@@ -11,10 +12,16 @@ app.get('/', (_request, response) => {
 
 app.use(express.json());
 
+// Login
 app.post('/login', validateInputs, loginController.login);
 
+// User
 app.post('/user', userController.insert);
+app.get('/user', authentication, userController.findAll);
+app.get('/user/:id', authentication, userController.findById);
 
-// É importante exportar a constante `app`,
-// para que possa ser utilizada pelo arquivo `src/server.js`
+// Categories
+app.post('/categories', authentication, categoryController.insert);
+app.get('/categories', authentication, categoryController.findAll);
+
 module.exports = app;
